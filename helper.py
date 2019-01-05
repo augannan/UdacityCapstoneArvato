@@ -36,8 +36,11 @@ def clean_data_dictionary(data_dictionary, df):
     missing_values = []
     for i in range(data_dictionary.shape[0]):
         # attribute = data_dictionary["attribute"][i]
-        sth = [value for value in data_dictionary["missing_or_unknown"][i].\
+        try:
+            sth = [value for value in data_dictionary["missing_or_unknown"].iloc[i].\
                                     replace("[","").replace("]","").split(",")]
+        except:
+            pass
         if 'XX' in sth:
             missing_values.append(sth)
         elif 'X' in sth:
@@ -162,6 +165,11 @@ def attributes_by_type(df, data_dictionary):
                       if each in list(df)]
     interval_features = [each for each in data_dictionary[data_dictionary["type"]=="interval"]["attribute"]
                          if each in list(df)]
+                         
+    all_features = list(set(cat_features)) + list(set(ord_features)) + list(set(num_features)) +\
+                             list(set(mixed_features)) + list(set(interval_features))
+    
+    cat_features += list(set(list(df)) - set(all_features))
 
     return cat_features, ord_features, num_features, mixed_features, interval_features
 
@@ -254,27 +262,45 @@ def clean_data(df, data_dictionary):
         attribute = data_dictionary["attribute"][i]
         df[attribute] = df[attribute].replace(data_dictionary["missing_or_unknown"][i], np.nan)
 
+    print("Drop LNR and D19_LETZTER_KAUF_BRANCHE columns")
+    try:
+        df.drop(['LNR', 'D19_LETZTER_KAUF_BRANCHE'], axis=1, inplace=True)
+    except:
+        pass
+
+
     print("Drop columns with more than 20% missing values")
-    columns_to_drop = ['AGER_TYP',
-                       'ALTER_HH',
-                       'ALTER_KIND1',
-                       'ALTER_KIND2',
-                       'ALTER_KIND3',
+    columns_to_drop = ['TITEL_KZ',
                        'ALTER_KIND4',
-                       'ALTERSKATEGORIE_FEIN',
-                       'D19_BANKEN_ONLINE_QUOTE_12',
-                       'D19_GESAMT_ONLINE_QUOTE_12',
-                       'D19_KONSUMTYP',
-                       'D19_LETZTER_KAUF_BRANCHE',
-                       'D19_LOTTO',
-                       'D19_SOZIALES',
-                       'D19_TELKO_ONLINE_QUOTE_12',
-                       'D19_VERSAND_ONLINE_QUOTE_12',
                        'D19_VERSI_ONLINE_QUOTE_12',
-                       'EXTSEL992', 'GEBURTSJAHR',
+                       'ALTER_KIND3',
+                       'D19_BANKEN_LOKAL',
+                       'ALTER_KIND2',
+                       'D19_DIGIT_SERV',
+                       'D19_TIERARTIKEL',
+                       'D19_NAHRUNGSERGAENZUNG',
+                       'D19_GARTEN',
+                       'D19_ENERGIE',
+                       'D19_BANKEN_ONLINE_QUOTE_12',
+                       'ALTER_KIND1',
+                       'D19_TELKO_ANZ_24',
+                       'D19_LEBENSMITTEL',
+                       'AGER_TYP',
+                       'D19_BANKEN_ANZ_12',
+                       'D19_BANKEN_REST',
+                       'D19_BILDUNG',
+                       'D19_BANKEN_GROSS',
+                       'D19_VERSI_ANZ_24',
+                       'D19_RATGEBER',
+                       'D19_LOTTO',
+                       'D19_HANDWERK',
+                       'D19_FREIZEIT',
+                       'D19_SCHUHE',
+                       'D19_TELKO_MOBILE',
                        'KBA05_BAUMAX',
-                       'KK_KUNDENTYP',
-                       'TITEL_KZ']
+                       'D19_KINDERARTIKEL',
+                       'D19_VERSAND_REST',]
+
     df.drop(columns_to_drop, axis=1, inplace=True)
 
     print("Drop rows with more than 25 missing values")
@@ -290,30 +316,12 @@ def clean_data(df, data_dictionary):
                            'LP_FAMILIE_FEIN']
         
 
-    cat_features, ord_features, num_features, mixed_features, interval_features = attributes_by_type(df, data_dictionary)
 
     print("Imputing missing values for features")
-    cat_pipeline = Pipeline([('categorical_impute',
-                             SimpleImputer(missing_values=np.nan,
-                                           strategy='most_frequent'))])
-    num_pipeline = Pipeline([('num_impute',
-                             SimpleImputer(missing_values=np.nan,
-                                           strategy='median'))])
+    for each in list(df):
+        df[each] = df[each].fillna(df[each].mode()[0])
 
-
-    transformers = [('cat', cat_pipeline, cat_features),
-                   ('num', num_pipeline, num_features),
-                   ('mixed', cat_pipeline, mixed_features),
-                   ('ord', num_pipeline, ord_features),
-                   ('interval', cat_pipeline, interval_features),
-                   ]
-
-    ct = ColumnTransformer(transformers=transformers)
-
-    df = ct.fit_transform(df)
-
-    column_names = cat_features + num_features + mixed_features + ord_features + interval_features
-    df = pd.DataFrame(df, columns = column_names)
+    
 
     print("One-hot encoding of categorical variables")
     df = pd.get_dummies(df, columns=['NATIONALITAET_KZ',
@@ -369,6 +377,76 @@ def clean_data(df, data_dictionary):
     print("Engineering mixed-type features done")
 
     df = df.drop(cat_columns_to_drop, axis=1)
+    
+
+    print("Change EINGEFUEGT_AM to year")
+    df["EINGEFUEGT_AM"] = pd.to_datetime(df["EINGEFUEGT_AM"], format='%Y/%m/%d %H:%M')
+    df["EINGEFUEGT_AM"] = df["EINGEFUEGT_AM"].dt.year
+
+    cat_features, ord_features, num_features, mixed_features, interval_features = attributes_by_type(df, data_dictionary)
+    print("Log transforming skewed numerical features...")
+    threshold = 1.0
+    skewed = [each for each in num_features if df[each].skew() > threshold]
+
+    features_log_transformed = pd.DataFrame(data = df)
+    features_log_transformed[skewed] = df[skewed].apply(lambda x: np.log(x + 1))
+    print("Log transforming skewed numerical features done")
+
+    print("Scaling numerical features..")
+    scaler = MinMaxScaler()
+    features_log_minmax_transform = pd.DataFrame(data = features_log_transformed)
+    features_log_minmax_transform[num_features] = scaler.fit_transform(features_log_transformed[num_features])
+    print("Scaling numerical features done")
+
+    df = features_log_minmax_transform
 
     # Return the cleaned dataframe.
     return df
+
+from sklearn.cluster import MiniBatchKMeans
+
+def get_kmeans_score(data, center, batch_size=25000):
+    '''
+    returns the kmeans score regarding SSE for points to centers using MiniBatchKMeans
+    
+    INPUT:
+        data - the dataset you want to fit kmeans to
+        center - the number of centers you want (the k value)
+        
+    OUTPUT:
+        score - the SSE score for the kmeans model fit to the data
+    '''
+    #instantiate kmeans
+    kmeans = MiniBatchKMeans(n_clusters=center, random_state=42, batch_size=batch_size)
+
+    # Then fit the model to your data using the fit method
+    model = kmeans.fit(data)
+    
+    # Obtain a score related to the model fit
+    score = np.abs(model.score(data))
+    
+    return score
+
+def scree_plot_clusters(df, max_centers):
+    '''
+    returns the scree plot of SSE vs number of clusters
+    
+    INPUT:
+        data - the dataset you want to investigate
+        max_center - the maximum number of clusters
+        
+    OUTPUT:
+        plot of SSE vs K
+    '''
+    scores = []
+    centers = list(range(1, max_centers))
+
+    for center in centers:
+        scores.append(get_kmeans_score(df, center))
+
+    plt.figure(figsize=(15,10))
+    plt.plot(centers, scores, linestyle='--', marker='o', color='b');
+    plt.xlabel('K');
+    plt.ylabel('SSE');
+    plt.title('SSE vs. K')
+    plt.show()
