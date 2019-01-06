@@ -113,37 +113,35 @@ def show_dist_missing_values_column(df, n=50):
     ax.set_ylabel("Proportion of missing data points")
     plt.show()
 
-def compare_distribution(column_name, df1, df2):
+def compare_distribution(column_names, df1, df2):
     '''
-    Compares the distribution of a particular attribute between two dataframes
-    
-    INPUTS:
-        - column_name (str): name of attribute
+        Compares the distribution of a particular attribute between two dataframes
+        
+        INPUTS:
+        - column_names (list): names of attributes we want to compare
         - df1 (DataFrame): the first dataframe
         - df2 (DataFrame): the second dataframe
-
-    OUTPUT:
-         - plots of distribution of attribute between both dataframes
-    '''
+        
+        OUTPUT:
+        - plots of distribution of attributes between both dataframes
+        '''
     
-    fig = plt.figure(figsize=(10,5))
-    fig.suptitle("Comparison of datasets with and without missing values")
-    #fig.subplots(nrows=2, ncols=2, sharex='col', sharey='row')
-    plt.subplot(1,2,1)
-    ax1 = sns.countplot(data = df1, x=df1[column_name])
-    ax1.set_xlabel("Values")
-    ax1.set_ylabel("Counts")
-    ax1.set_title("Dataset with no missing values")
-    plt.subplot(1,2,2)
-    ax2 = sns.countplot(data=df2, x=df2[column_name])
-    ax2.set_title("Dataset with some missing values")
-    ax2.set_xlabel("Values")
-    ax2.set_ylabel("Counts")
-    
+    fig = plt.figure(figsize=(20,15))
+    fig.subplots(nrows=len(column_names), ncols=2, sharex='col', sharey='row')
+    for i in range(len(column_names)):
+        ax1 = fig.add_subplot(len(column_names),2,2*i+1)
+        ax1 = sns.countplot(data = df1, x=df1[column_names[i]])
+        ax1.set_xlabel("Values")
+        ax1.set_ylabel("Counts")
+        ax1.set_title("{}: few missing values".format(column_names[i]))
+        ax2 = fig.add_subplot(len(column_names),2,2*i+2)
+        ax2 = sns.countplot(data=df2, x=df2[column_names[i]])
+        ax2.set_title("{}: many missing values".format(column_names[i]))
+        ax2.set_xlabel("Values")
+        ax2.set_ylabel("Counts")
     fig.tight_layout()
-    fig.subplots_adjust(top=0.88, wspace=0.4)
+    fig.subplots_adjust(hspace=0.2)
     plt.show()
-
 def attributes_by_type(df, data_dictionary):
     '''
     Shows features of different types in the dataset
