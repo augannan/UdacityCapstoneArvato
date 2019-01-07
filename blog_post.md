@@ -30,7 +30,7 @@ The first step was to transform all the missing data into `NaN`, so that pandas 
 
 Secondly, I had to eliminate all the columns which had a high proportion of missing values. I chose to eliminate the columns with more than 30% of their values missing. Below is a graph showing the columns with the highest proportions of missing data points in the dataset:
 
-![figure](images/column_distribution.png)
+![figure](images/missing_columns.png)
 
 The next step was to eliminate the rows with missing data points. Most of the rows were relatively clean, and only a few had more than 25 missing values. As such, I divided the dataset in two: one whose rows all had fewer than 25 missing values, and another whose rows had more than 25 missing values. I then proceeded to investigate the distribution of some attributes between both datasets. I found that there wasn't much of  a qualitative difference between both datasets as shown in the figure below, and so I decided to keep the dataset with fewer than 25 missing values.
 
