@@ -68,7 +68,7 @@ Once this was done, I replaced all missing values with the mode for categorical 
 At this stage of the analysis I performed dimensionality reduction on the dataset using Principal Component Analysis (PCA). I found that 89 principal components explained 92% of the variance in the dataset, which is interesting, given that this is less than one quarter of the dataset. This is probably because many of the features in the dataset are highly correlated.
 
 The plot of cumulative variance against number of components is show below.
-![picture](images/variances_accounted.png)
+![picture](images/cumulative_variance.png)
 
 Now I divided the dataset into clusters. To do so, I first made a scree plot, of Sum of Square Errors against number of clusters, in order to determine the optimal number of clusters for the dataset. I used MiniBatch KMeans Clustering, becuase it is much faster than standard KMeans, with only a slight drop in quality of results [(see here)](https://chrisalbon.com/machine_learning/clustering/minibatch_k-means_clustering/).
 
