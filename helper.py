@@ -113,7 +113,7 @@ def show_dist_missing_values_column(df, n=50):
     ax.set_ylabel("Proportion of missing data points")
     plt.show()
 
-def compare_distribution(column_names, df1, df2):
+def compare_distribution(column_names, df1, df2, title_1, title_2):
     '''
         Compares the distribution of a particular attribute between two dataframes
         
@@ -121,27 +121,30 @@ def compare_distribution(column_names, df1, df2):
         - column_names (list): names of attributes we want to compare
         - df1 (DataFrame): the first dataframe
         - df2 (DataFrame): the second dataframe
+        - title_1 (string): the name of first dataframe
+        - title_2 (string): the name of second dataframe
         
         OUTPUT:
         - plots of distribution of attributes between both dataframes
         '''
     
     fig = plt.figure(figsize=(20,15))
-    fig.subplots(nrows=len(column_names), ncols=2, sharex='col', sharey='row')
     for i in range(len(column_names)):
         ax1 = fig.add_subplot(len(column_names),2,2*i+1)
         ax1 = sns.countplot(data = df1, x=df1[column_names[i]])
         ax1.set_xlabel("Values")
         ax1.set_ylabel("Counts")
-        ax1.set_title("{}: few missing values".format(column_names[i]))
+        ax1.set_title("{}: {} ".format(column_names[i], title_1))
         ax2 = fig.add_subplot(len(column_names),2,2*i+2)
         ax2 = sns.countplot(data=df2, x=df2[column_names[i]])
-        ax2.set_title("{}: many missing values".format(column_names[i]))
+        ax2.set_title("{}: {}".format(column_names[i], title_2))
         ax2.set_xlabel("Values")
         ax2.set_ylabel("Counts")
     fig.tight_layout()
     fig.subplots_adjust(hspace=0.2)
     plt.show()
+
+
 def attributes_by_type(df, data_dictionary):
     '''
     Shows features of different types in the dataset
