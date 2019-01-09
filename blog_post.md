@@ -80,7 +80,18 @@ Now I had to compare the clusters formed by the general dataset, and those forme
 
 ![picture](images/clusters_general_customers.png)
 
-From this we can see that people from clusters 1 and 14 are highly overrepresented in the customer population, and a little less so in clusters 2 and 12. To gain a better understanding of the difference between the two populations, I considered two clusters - cluster 0 and cluster 1, and looked at the differences in distribution for a certain number of factors.
+From this we can see that people from clusters 3 and 6 are highly overrepresented in the customer population. To gain a better understanding of the difference between the two populations, I compared two clusters - cluster 2 and cluster 3.
+
+There are more than 300 features in the dataset. As such it would be virtually impossible to compare both clusters exhaustively. However, I selected four features and compared both populations, just for illustrative purposes. The four features I selected are:
+
+* `SEMIO-PFLICHT`: How dutiful the person is, with high values indicating low affinity for duty
+* `FINANZ-MINIMALIST`: How low their financial interest is, with high values indicating low affinity
+* `PJ-Movement`: Predominant movement of a person's youth
+* `SEMIO-SOZ`: How socially minded the person is, with high values indicating low affinity
+
+![picture](images/compare_general_customer.png)
+
+From the charts above, we can see that the target population is less dutiful, has a lower financial interest, and has a higher social affinity than the general population. The dominating movement of their youth is is Avantgarde, compared to the Mainstream movement for the general population.
 
 
 
