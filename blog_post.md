@@ -110,9 +110,25 @@ In this case, I chose the following as base models:
 * Multilayer Perceptron Classifier
 * LightGBM
 
+
 I then used a Gradient Boosting Classifier as a meta-learner. The goal was to optimize the ROC-AUC-score of the model, given that accuracy is not a good metric for evaluating models on highly imbalanced datasets.
 
 To begin with, I performed hyperparameter tuning on the base models using the `hyperopt` library, which is based upon a Bayesian framework. I then fed the tuned models, as well as the meta learner, using the `mlens` library developed by Sebastian Flannerhag [here](www.ml-ensemble.org).
+
+The following are the ROC AUC scores of the base learners, after some hyperparameter tuning:
+
+| Model                  | ROC AUC score |
+|------------------------|---------------|
+| Gaussian Naive Bayes   | 0.7484        |
+| Random Forest          | 0.7484        |
+| Gradient Boosting      | 0.7924        |
+| LightGBM Classifier    | 0.8054        |
+| Multi-Layer Perceptron | 0.7055        |
+| Logistic Regression    | 0.7133        |
+
+The stacked model had a score of 0.8138, whic is a major improvement over all the base learners.
+
+I now trained the model on the entire dataset, and saved, for use in the kaggle competition.
 
 ## Conclusion
 This was a really interesting machine learning project, especially given the difficulty of dealing with highly imbalanced data. While researching techniques on dealing with such issues, I came across a few techniques, most notably Synthetic Minority Over-sampling Technique ([SMOTE](https://jair.org/index.php/jair/article/view/10302)), and another technique called EC3 for combining clustering and classification ([here](https://arxiv.org/abs/1708.08591) )
@@ -120,6 +136,8 @@ This was a really interesting machine learning project, especially given the dif
 My implementation of SMOTE did not yield a good ROC-AUC score, probably because there are subtleties to the use of this technique which I haven't mastered yet, and so I decided not to use it. I also didn't use EC3 because I couldn't find any python libraries implementing it, and there wasn't enough time to code it up myself.
 
 However, both of these techniques look really interesting to me, and will be useful additions to my toolkit in the near future.
+
+I originally tried adding the clusters from the unsupervised learning part of the project into the dataset - my intuition being that because some clusters contain a higher proportion of customers than others, this would be a useful feature while training the model. However, I lacked the computing capacity to do so. I kept getting an `OSError: Too many open files` when I did this. Probably in the near future when I have more computing power, or figure out how to bypass this issue, I will investigate this option and see how the results differ.
 
 There are also many things that could be done differently during the cleaning and engineering phase of the project - use of different scalers, imputing missing values differently, etc., which I would definitely try, to see what effects they have on the final score.
 
