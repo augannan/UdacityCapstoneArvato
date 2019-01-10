@@ -10,6 +10,8 @@ All the libraries used are available in a standard Anaconda distribution - the o
 
 * notebook.ipynb: Jupyter notebook containing the main steps of the analysis
 * helper.py: Python file containing the main functions used in the notebook
+* blog_post.md: Report of findings from this project
+* images (folder): images from notebook, used in blog post.
 
 
 ## Results of Analysis
