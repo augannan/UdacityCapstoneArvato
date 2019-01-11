@@ -20,7 +20,11 @@ This post is an account of the steps I took in cleaning the data, and building t
 ## 1. Cleaning the Data
 Before beginning the process of cleaning and manipulating the data, a quick inspection of the dataset was necessary, to get a feel for the features present. The main dataset contained 891211 rows and 366 columns. Most of these features were ordinal. There were a few categorical and mixed features, and a much smaller number of numerical features. There were a few features with a high proportion of missing values.
 
+The following picture is a preview of the main dataset:
+
 ![picture](images/azdias_head.png)
+
+The following is a summary of the main statistics for some of the features of the dataset.
 ![picture](images/azdias_summary.png)
 
 The first part of the process of cleaning the data was compiling a useful data dictionary. There were some attributes in the data set which were not described in the data dictionaries provided. Also, there were a number of attributes in the data dictionary which were not found in the dataset.
@@ -29,7 +33,9 @@ For those attributes of the first kind, I looked for similar attributes in the e
 
 Even after all this was done, there were some attributes whose nature was truly unknown, because they resembled none of the attributes in the existing data dictionary. All but two of them seemed to be ordinal, and so I made the assumption that they were. The other two were  `EINGEFUEGT_AM` which was a date, and `EINGEZOGENAM_HH_JAHR`, which was numeric. I then treated them accordingly and added to the data dictionary. 
 
-At this point, I had a comprehensive data dictionary, and was ready to begin cleaning and transforming the data. 
+At this point, I had a comprehensive data dictionary, and was ready to begin cleaning and transforming the data. The following is a preview of the data dictionary:
+
+![picture](images/feat_info.png)
 
 The first step was to transform all the missing data into `NaN`, so that pandas could identify them as missing values and treat them as such.
 
