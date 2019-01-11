@@ -12,12 +12,17 @@ Four data files were associated with this project:
 
 Each row of the demographics files represents a single person, but also includes information outside of individuals, including information about their household, building, and neighborhood. 
 
-Upon completing the unsupervised learning portion of the project, I was expected to build a supervised learning model on the latter two files, to identify which people were likely to become customers of the company. The metric used for evaulating the model was the [ROC AUC score](https://en.wikipedia.org/wiki/Receiver_operating_characteristic).
+Upon completing the unsupervised learning portion of the project, I was expected to build a supervised learning model on the latter two files, to identify which people were likely to become customers of the company. The metric used for evaulating the model was the [ROC AUC score](https://en.wikipedia.org/wiki/Receiver_operating_characteristic). This is because classification was done by probability - instead of simply picking one of both classes, the model computed the probability of belonging to a particular class. The ROC does a good job of averaging out these probabilities at different thresholds, and so the Area Under this curve provides a good indication of the skill of the model.
 
 This post is an account of the steps I took in cleaning the data, and building the different models.
 
 
 ## 1. Cleaning the Data
+Before beginning the process of cleaning and manipulating the data, a quick inspection of the dataset was necessary, to get a feel for the features present. The main dataset contained 891211 rows and 366 columns. Most of these features were ordinal. There were a few categorical and mixed features, and a much smaller number of numerical features. There were a few features with a high proportion of missing values.
+
+![picture](images/azdias_head.png)
+![picture](images/azdias_summary.png)
+
 The first part of the process of cleaning the data was compiling a useful data dictionary. There were some attributes in the data set which were not described in the data dictionaries provided. Also, there were a number of attributes in the data dictionary which were not found in the dataset.
 
 For those attributes of the first kind, I looked for similar attributes in the existing data dictionary, and assumed that they were similar. For example, all the attributes beginning with `D19` were assumed to be ordinal, at a household level, and with `0` to indicate missing or unknown values. 
