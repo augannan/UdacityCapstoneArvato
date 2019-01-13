@@ -126,9 +126,25 @@ In this case, I chose the following as base models:
 
 I then used a Gradient Boosting Classifier as a meta-learner. The goal was to optimize the ROC-AUC-score of the model, given that accuracy is not a good metric for evaluating models on highly imbalanced datasets.
 
-To begin with, I performed hyperparameter tuning on the base models using the `hyperopt` library, which is based upon a Bayesian framework. I then fed the tuned models, as well as the meta learner, using the `mlens` library developed by Sebastian Flannerhag [here](www.ml-ensemble.org).
+To begin with, I performed hyperparameter tuning on the base models using the `hyperopt` library, which is based upon a Bayesian framework. Here is a list of the base learners that needed tuning, alongside the final version of the hyperparameters:
 
-The following are the ROC AUC scores of the base learners, after some hyperparameter tuning:
+| **Classifier**               | **Hyperparameters** | **Final Value** |
+|------------------------------|---------------------|-----------------|
+| Random Forest Classifier     | `bootstrap`         | `False `        |
+|                              | `max_weight`        | {0:80}          |
+|                              | `max_depth`         | 2               |
+|                              | `criterion`         | `entropy`       |
+|                              | `n_estimators`      | 1000            |
+|                              | `min_samples_leaf`  | 8               |
+|                              | `min_samples_split` | 2               |
+| Logistic Regression          | `C`                 | 0.01            |
+| Gradient Boosting Classifier | `n_estimators`      | 100             |
+|                              | `learning_rate`     | 0.01            |
+| LGBM Classifier              | `n_estimators`      | 500             |
+|                              | `learning_rate`     | 0.001           |
+|                              | `max_depth`         | 10              |
+
+The following are the ROC AUC scores of the base learners with the tuned hyperparameters:
 
 | Model                  | ROC AUC score |
 |------------------------|---------------|
@@ -139,9 +155,11 @@ The following are the ROC AUC scores of the base learners, after some hyperparam
 | Multi-Layer Perceptron | 0.7055        |
 | Logistic Regression    | 0.7133        |
 
+At this point, I fed the tuned models, as well as the meta learner, using the `mlens` library developed by Sebastian Flannerhag [here](www.ml-ensemble.org).
+
 The stacked model had a score of 0.8138, whic is a major improvement over all the base learners.
 
-I now trained the model on the entire dataset, and saved, for use in the kaggle competition.
+I now trained the model on the entire dataset, and saved, for use in the kaggle competition. This model had an ROC AUC score of 0.80295 with the competition's test dataset.
 
 ## Conclusion
 This was a really interesting machine learning project, especially given the difficulty of dealing with highly imbalanced data. While researching techniques on dealing with such issues, I came across a few techniques, most notably Synthetic Minority Over-sampling Technique ([SMOTE](https://jair.org/index.php/jair/article/view/10302)), and another technique called EC3 for combining clustering and classification ([here](https://arxiv.org/abs/1708.08591) )
