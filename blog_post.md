@@ -1,6 +1,8 @@
 #  Identifying Customer Segments for Arvato
 
 ## 0. Introduction
+Mail-order business is a method of merchandising in which the seller’s offer is made through mass mailing of a circular or catalog or through an advertisement placed in a newspaper or magazine and in which the buyer places an order by mail (see [here](https://www.britannica.com/topic/mail-order-business)). To improve efficiency of marketing campaigns, however, sometimes a company might decide to find out what segments of the population are more likely to consume its products, and target them with advertising.
+
 This project involved applying unsupervised learning techniques to identify segments of the population that form the core customer base for a mail-order sales company in Germany. These segments can then be used to direct marketing campaigns towards audiences that will have the highest expected rate of returns. The data used was provided by Udacity partners at Bertelsmann Arvato Analytics.
 
 Four data files were associated with this project:
