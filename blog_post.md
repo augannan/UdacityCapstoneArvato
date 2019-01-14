@@ -157,7 +157,7 @@ The following are the ROC AUC scores of the base learners with the tuned hyperpa
 
 At this point, I fed the tuned models, as well as the meta learner, using the `mlens` library developed by Sebastian Flannerhag [here](www.ml-ensemble.org).
 
-The stacked model had a score of 0.8138, whic is a major improvement over all the base learners.
+The stacked model had a score of 0.8138, which is a major improvement over all the base learners. To make sure this score was consistent, I fitted it on the training set and tested it 15 times, with different `random_state`s. The mean ROC AUC score was 0.8147, and the variance was 0.00003, which shows that the model predictions are consistent.
 
 I now trained the model on the entire dataset, and saved, for use in the kaggle competition. This model had an ROC AUC score of 0.80295 with the competition's test dataset.
 
